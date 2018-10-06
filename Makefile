@@ -1,16 +1,22 @@
 # https://github.com/Miroka96/docker-makefile
 
-NAME = container-name
+NAME = miroka96/container-name
 TAG = 1.0
 
 VOLUME = container-data
 MOUNTPATH = /data
 
+LOCALPORT = 8080
+CONTAINERPORT = 80
+
 # if you want a special image name, edit this
 IMAGE = $(NAME):$(TAG)
 
-# if you have no volume, comment the following line
+# if you have no volume, delete the right part
 VOLUMEMOUNTING = -v $(VOLUME):$(MOUNTPATH)
+
+# if you publish no ports, delete the right part
+PORTPUBLISHING = -p $(LOCALPORT):$(CONTAINERPORT)
 
 .PHONY: build-container test-container build-test-container deploy-container build-deploy-container undeploy-container redeploy-container build-redeploy-container clean-volume clean-container clean install-dependencies configure
 
@@ -18,12 +24,12 @@ build-container:
 	docker build -t $(IMAGE) .
 
 test-container:
-	docker run $(VOLUMEMOUNTING) --rm $(IMAGE)
+	docker run $(VOLUMEMOUNTING) $(PORTPUBLISHING) --rm $(IMAGE)
 
 build-test-container: build-container test-container
 
 deploy-container:
-	docker run --detach --restart always --name=$(NAME) $(VOLUMEMOUNTING) $(IMAGE)
+	docker run --detach --restart always --name=$(NAME) $(VOLUMEMOUNTING) $(PORTPUBLISHING) $(IMAGE)
 
 build-deploy-container: build-container deploy-container
 

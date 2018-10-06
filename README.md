@@ -20,6 +20,25 @@ To use this makefile you have to:
 ### MOUNTPATH
 - put the filepath here, where the volume will be mounted inside the container
 
+### LOCALPORT
+- on this local port (127.0.0.1:localport) the containerport will be reachable
+
+### CONTAINERPORT
+- on this port your application is listening inside the container
+
+
+### IMAGE
+- best: leave it like it is
+
+### VOLUMEMOUNTING
+- these parameters will be given to docker, when it runs the container
+- if you do not use any volumes, delete the right part
+- if you use multiple volumes, append further -v parameters
+
+### PORTPUBLISHING
+- these parameters will be given to docker, when it runs the container
+- if you do not use any port forwards, delete the right part
+- if you use multiple forwards, append further -p parameters
 
 ## commands
 
