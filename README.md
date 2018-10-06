@@ -4,6 +4,23 @@ To use this makefile you have to:
 - install make and docker (and have to have docker permissions)
 - run 'make \<command\>'
 
+## parameters
+
+### NAME
+- name it like you want
+- for non-local use name it \<username\>/\<imagename\>
+
+### TAG
+- this should be a version number
+
+### VOLUME
+- name it really like you want
+- in best case the name is connected to the usage
+
+### MOUNTPATH
+- put the filepath here, where the volume will be mounted inside the container
+
+
 ## commands
 
 ### build-container
