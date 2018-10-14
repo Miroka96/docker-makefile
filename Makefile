@@ -18,36 +18,39 @@ VOLUMEMOUNTING = -v $(VOLUME):$(MOUNTPATH)
 # if you publish no ports, delete the right part
 PORTPUBLISHING = -p $(LOCALPORT):$(CONTAINERPORT)
 
-.PHONY: build-container test-container build-test-container deploy-container build-deploy-container undeploy-container redeploy-container build-redeploy-container clean-volume clean-container clean install-dependencies configure
+.PHONY: build test build-test deploy build-deploy undeploy redeploy build-redeploy clean-volume clean clean install-dependencies configure
 
-build-container:
+build:
 	docker build -t $(IMAGE) .
 
-test-container:
+build-nocache:
+	docker build -t $(IMAGE) --no-cache .
+
+test:
 	docker run $(VOLUMEMOUNTING) $(PORTPUBLISHING) --rm $(IMAGE)
 
-build-test-container: build-container test-container
+build-test: build test
 
-deploy-container:
+deploy:
 	docker run --detach --restart always --name=$(NAME) $(VOLUMEMOUNTING) $(PORTPUBLISHING) $(IMAGE)
 
-build-deploy-container: build-container deploy-container
+build-deploy: build deploy
 
-undeploy-container:
+undeploy:
 	-docker stop $(NAME)
 	docker rm $(NAME)
 
-redeploy-container: undeploy-container deploy-container
+redeploy: undeploy deploy
 
-build-redeploy-container: build-container redeploy-container
+build-redeploy: build redeploy
 
 clean-volume:
 	-docker volume rm $(VOLUME)
 
-clean-container:
+clean:
 	-docker rm $(NAME)
 
-clean: clean-volume clean-container
+clean: clean-volume clean
 
 install-dependencies:
 	echo No dependencies yet
