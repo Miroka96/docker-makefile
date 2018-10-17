@@ -53,6 +53,9 @@ To use this makefile you have to:
 - run the container with the volume mounted
 - remove the container after it shuts down
 
+### test-shell
+- like test, but start an interactive bash shell inside the container
+
 ### build-test
 - first build, then test the container
 
@@ -80,16 +83,8 @@ To use this makefile you have to:
 ### clean-volume
 - try to remove the volume
 
-### clean
+### clean-container
 - try to remove the container
 
 ### clean
 - first try to remove the volume, then the container
-
-### install-dependencies
-- in case you have any further dependencies, add them here
-- useful for local builds outside docker or for the configuration script
-
-### configure
-- create a configuration script and reference it like this: 'sh configure.sh' or 
-- add all configuration steps in this section
