@@ -3,6 +3,7 @@
 NAME = miroka96/container-name
 TAG = 1.0
 
+# either use volume name or absolute host path, eventually use ${PWD} for the current working directory
 VOLUME = container-data
 MOUNTPATH = /data
 
@@ -18,7 +19,7 @@ VOLUMEMOUNTING = -v $(VOLUME):$(MOUNTPATH)
 # if you publish no ports, delete the right part
 PORTPUBLISHING = -p $(LOCALPORT):$(CONTAINERPORT)
 
-.PHONY: build test build-test deploy build-deploy undeploy redeploy build-redeploy clean-volume clean clean install-dependencies configure
+.PHONY: build test test-shell build-test deploy build-deploy undeploy redeploy build-redeploy clean-volume clean clean install-dependencies configure
 
 build:
 	docker build -t $(IMAGE) .
@@ -28,6 +29,9 @@ build-nocache:
 
 test:
 	docker run $(VOLUMEMOUNTING) $(PORTPUBLISHING) --rm $(IMAGE)
+
+test-shell:
+	docker run $(VOLUMEMOUNTING) $(PORTPUBLISHING) -it --rm $(IMAGE) /bin/bash
 
 build-test: build test
 
