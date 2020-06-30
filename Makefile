@@ -35,6 +35,8 @@ CLI_PARAMETERS =
 # if you do not need to set debug CLI parameters for the executed program, delete the right part
 CLI_DEBUG_PARAMETERS =
 
+DOCKERPARAMETERS = $(VOLUMEMOUNTING) $(PORTPUBLISHING) $(CONTAINERLINKING) $(ENVIRONMENT)
+
 .PHONY: build test test-shell build-test deploy build-deploy undeploy redeploy build-redeploy clean-volume clean-container clean install-dependencies configu$
 
 build:
@@ -44,15 +46,15 @@ build-nocache:
         docker build -t $(IMAGE) --no-cache .
 
 test:
-        docker run $(VOLUMEMOUNTING) $(PORTPUBLISHING) $(CONTAINERLINKING) $(ENVIRONMENT) --rm $(IMAGE) $(CLI_PARAMETERS) $(CLI_DEBUG_PARAMETERS)
+        docker run $(DOCKERPARAMETERS) --rm $(IMAGE) $(CLI_PARAMETERS) $(CLI_DEBUG_PARAMETERS)
 
 test-shell:
-        docker run $(VOLUMEMOUNTING) $(PORTPUBLISHING) $(CONTAINERLINKING) $(ENVIRONMENT) -it --rm $(IMAGE) /bin/bash
+        docker run $(DOCKERPARAMETERS) -it --rm $(IMAGE) /bin/bash
 
 build-test: build test
 
 deploy:
-        docker run --detach --restart always --name=$(NAME) $(VOLUMEMOUNTING) $(PORTPUBLISHING) $(CONTAINERLINKING) $(ENVIRONMENT) $(IMAGE) $(CLI_PARAMETERS)
+        docker run --detach --restart always --name=$(NAME) $(DOCKERPARAMETERS) $(IMAGE) $(CLI_PARAMETERS)
 
 build-deploy: build deploy
 
