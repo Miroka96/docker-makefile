@@ -1,57 +1,73 @@
 # https://github.com/Miroka96/docker-makefile
 
-NAME = miroka96/container-name
+AUTHOR = miroka96
+NAME = container-name
 TAG = 1.0
+
+# if you want a special image name, edit this
+IMAGE = $(AUTHOR)/$(NAME):$(TAG)
 
 # either use volume name or absolute host path, eventually use ${PWD} for the current working directory
 VOLUME = container-data
 MOUNTPATH = /data
 
-LOCALPORT = 8080
-CONTAINERPORT = 80
-
-# if you want a special image name, edit this
-IMAGE = $(NAME):$(TAG)
-
 # if you have no volume, delete the right part
 VOLUMEMOUNTING = -v $(VOLUME):$(MOUNTPATH)
+
+LOCALPORT = 8080
+CONTAINERPORT = 80
 
 # if you publish no ports, delete the right part
 PORTPUBLISHING = -p $(LOCALPORT):$(CONTAINERPORT)
 
-.PHONY: build test test-shell build-test deploy build-deploy undeploy redeploy build-redeploy clean-volume clean-container clean install-dependencies configure
+OTHER_CONTAINER_NAME = my_mysql
+OTHER_CONTAINER_ALIAS = mysql
+
+# if you do not link another container, delete the right part
+CONTAINERLINKING = --link $(OTHER_CONTAINER_NAME):$(OTHER_CONTAINER_ALIAS)
+
+# if you do not need to set environment variables, delete the right part
+ENVIRONMENT = -e DEBUG=false
+
+# if you do not need to set CLI parameters for the executed program, delete the right part
+CLI_PARAMETERS =
+
+# if you do not need to set debug CLI parameters for the executed program, delete the right part
+CLI_DEBUG_PARAMETERS =
+
+.PHONY: build test test-shell build-test deploy build-deploy undeploy redeploy build-redeploy clean-volume clean-container clean install-dependencies configu$
 
 build:
-	docker build -t $(IMAGE) .
+        docker build -t $(IMAGE) .
 
 build-nocache:
-	docker build -t $(IMAGE) --no-cache .
+        docker build -t $(IMAGE) --no-cache .
 
 test:
-	docker run $(VOLUMEMOUNTING) $(PORTPUBLISHING) --rm $(IMAGE)
+        docker run $(VOLUMEMOUNTING) $(PORTPUBLISHING) $(CONTAINERLINKING) $(ENVIRONMENT) --rm $(IMAGE) $(CLI_PARAMETERS) $(CLI_DEBUG_PARAMETERS)
 
 test-shell:
-	docker run $(VOLUMEMOUNTING) $(PORTPUBLISHING) -it --rm $(IMAGE) /bin/bash
+        docker run $(VOLUMEMOUNTING) $(PORTPUBLISHING) $(CONTAINERLINKING) $(ENVIRONMENT) -it --rm $(IMAGE) /bin/bash
 
 build-test: build test
 
 deploy:
-	docker run --detach --restart always --name=$(NAME) $(VOLUMEMOUNTING) $(PORTPUBLISHING) $(IMAGE)
+        docker run --detach --restart always --name=$(NAME) $(VOLUMEMOUNTING) $(PORTPUBLISHING) $(CONTAINERLINKING) $(ENVIRONMENT) $(IMAGE) $(CLI_PARAMETERS)
 
 build-deploy: build deploy
 
 undeploy:
-	-docker stop $(NAME)
-	docker rm $(NAME)
+        -docker stop $(NAME)
+        docker rm $(NAME)
 
 redeploy: undeploy deploy
 
 build-redeploy: build redeploy
 
 clean-volume:
-	-docker volume rm $(VOLUME)
+        -docker volume rm $(VOLUME)
 
 clean-container:
-	-docker rm $(NAME)
+        -docker rm $(NAME)
 
 clean: clean-volume clean-container
