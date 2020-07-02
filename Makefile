@@ -37,39 +37,39 @@ CLI_DEBUG_PARAMETERS =
 
 DOCKERPARAMETERS = $(VOLUMEMOUNTING) $(PORTPUBLISHING) $(CONTAINERLINKING) $(ENVIRONMENT)
 
-.PHONY: build test test-shell build-test deploy build-deploy undeploy redeploy build-redeploy clean-volume clean-container clean install-dependencies configu$
+.PHONY: build test test-shell build-test deploy build-deploy undeploy redeploy build-redeploy clean-volume clean-container clean
 
 build:
-        docker build -t $(IMAGE) .
+		docker build -t $(IMAGE) .
 
 build-nocache:
-        docker build -t $(IMAGE) --no-cache .
+		docker build -t $(IMAGE) --no-cache .
 
 test:
-        docker run $(DOCKERPARAMETERS) --rm $(IMAGE) $(CLI_PARAMETERS) $(CLI_DEBUG_PARAMETERS)
+		docker run $(DOCKERPARAMETERS) --rm $(IMAGE) $(CLI_PARAMETERS) $(CLI_DEBUG_PARAMETERS)
 
 test-shell:
-        docker run $(DOCKERPARAMETERS) -it --rm $(IMAGE) /bin/bash
+		docker run $(DOCKERPARAMETERS) -it --rm $(IMAGE) /bin/bash
 
 build-test: build test
 
 deploy:
-        docker run --detach --restart always --name=$(NAME) $(DOCKERPARAMETERS) $(IMAGE) $(CLI_PARAMETERS)
+		docker run --detach --restart always --name=$(NAME) $(DOCKERPARAMETERS) $(IMAGE) $(CLI_PARAMETERS)
 
 build-deploy: build deploy
 
 undeploy:
-        -docker stop $(NAME)
-        docker rm $(NAME)
+		-docker stop $(NAME)
+		docker rm $(NAME)
 
 redeploy: undeploy deploy
 
 build-redeploy: build redeploy
 
 clean-volume:
-        -docker volume rm $(VOLUME)
+		-docker volume rm $(VOLUME)
 
 clean-container:
-        -docker rm $(NAME)
+		-docker rm $(NAME)
 
 clean: clean-volume clean-container
